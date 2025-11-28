@@ -67,8 +67,11 @@ module SubmodulerChild
 
     def calculate_relative_path(target_dir)
       # From .kiro/steering to target
-      # Typically ../../../target_dir
-      File.join('../../../', target_dir)
+      # We're in: <submodule>/.kiro/steering
+      # target_dir already includes the full path from submodule root
+      # 
+      # Just go up 2 levels from .kiro/steering to reach submodule root
+      File.join('../../', target_dir)
     end
 
     def link_files_from(source_dir, relative_prefix)
