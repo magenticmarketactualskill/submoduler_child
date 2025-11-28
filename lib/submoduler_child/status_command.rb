@@ -11,7 +11,7 @@ module SubmodulerChild
     end
 
     def execute
-      logger.info "Checking child submodule status..."
+      show_child_header
       
       check_repository_status
       check_branch_info
@@ -23,6 +23,23 @@ module SubmodulerChild
     end
 
     private
+
+    def show_child_header
+      ini = SubmodulerCommon::SubmodulerIni.new
+      
+      if ini.exist?
+        ini.load_config
+        child_name = ini.child_name || 'unknown'
+        logger.info "=== Child Submodule: #{child_name} ==="
+        logger.info ""
+      else
+        logger.info "=== Child Submodule Status ==="
+        logger.info ""
+      end
+    rescue SubmodulerCommon::SubmodulerIni::ConfigError
+      logger.info "=== Child Submodule Status ==="
+      logger.info ""
+    end
 
     def parse_options
       OptionParser.new do |opts|
