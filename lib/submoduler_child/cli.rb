@@ -94,16 +94,28 @@ module SubmodulerChild
     end
 
     def display_help
-      puts "Submoduler Child - Manage child submodule operations"
+      # Show child name if available
+      ini = SubmodulerCommon::SubmodulerIni.new
+      if ini.exist?
+        begin
+          ini.load_config
+          child_name = ini.child_name
+          puts "Submoduler Child - #{child_name}" if child_name
+        rescue SubmodulerCommon::SubmodulerIni::ConfigError
+          # Ignore and show generic header
+        end
+      end
+      
+      puts "Submoduler Child - Manage child submodule operations" unless ini.exist? && ini.child_name
       puts ""
-      puts "Usage: bin/submoduler_child.rb <command> [options]"
+      puts "Usage: bin/submoduler <command> [options]"
       puts ""
       puts "Available commands:"
       COMMANDS.each do |cmd, desc|
         puts "  #{cmd.ljust(12)} #{desc}"
       end
       puts ""
-      puts "Run 'bin/submoduler_child.rb <command> --help' for command-specific options"
+      puts "Run 'bin/submoduler <command> --help' for command-specific options"
     end
 
     def colorize(message, type = :default)
