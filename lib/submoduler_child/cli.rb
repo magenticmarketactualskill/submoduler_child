@@ -12,7 +12,6 @@ module SubmodulerChild
       'test' => 'Run tests in the child submodule',
       'version' => 'Display and manage version information',
       'build' => 'Build the child submodule gem package',
-      'symlink_build' => 'Build symlinks from vendor gems to child .kiro/steering',
       'update' => 'Run full update workflow (tests, commit, bump, push)'
     }.freeze
 
@@ -77,10 +76,6 @@ module SubmodulerChild
         TestCommand.new(@args).execute
       when 'version'
         VersionCommand.new(@args).execute
-      when 'symlink_build'
-        require_relative 'symlink_build_command'
-        SymlinkBuildCommand.run
-        0
       when 'build'
         puts "Build command not yet implemented"
         0

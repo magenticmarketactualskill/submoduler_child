@@ -1,12 +1,12 @@
+## Context
+
+see submoduler_common gem
+
 # Submoduler Child Guide
 
-## Overview
+ It provides tools for child components to managed in a monorepo environment, enabling them to reference and interact with the parent repository.
 
-The `submoduler-core-submoduler_child` gem is used by submodules in the active_data_flow project. It provides tools for managing child components in a monorepo environment, enabling them to reference and interact with the parent repository.
-
-**Key Distinction**: 
-- **Parent gem** (`submoduler_parent`) - Used by active_data_flow (the parent repository)
-- **Child gem** (`submoduler_child`) - Used by submodules (child components)
+reference: https://github.com/magenticmarketactualskill/submoduler-core-submoduler_child.git
 
 ## Installation
 
@@ -168,9 +168,9 @@ submodules/active_data_flow-connector-source-active_record/
 │   │   ├── requirements.md
 │   │   ├── design.md
 │   │   ├── tasks.md
-│   │   ├── parent_requirements.md  # Symlink to parent
-│   │   └── parent_design.md        # Symlink to parent
-│   └── steering/                   # All symlinks to parent
+│   │   ├── parent_requirements.md  # Reference to parent
+│   │   └── parent_design.md        # Reference to parent
+│   └── steering/                   # Managed by git_steering gem
 ├── Gemfile                         # Includes submoduler_child
 ├── active_data_flow-connector-source-active_record.gemspec
 └── README.md
@@ -217,7 +217,7 @@ Through the submoduler_child gem, submodules can:
    path = ../../
    ```
 
-5. **Create .kiro structure** with symlinks to parent
+5. **Create .kiro structure** - steering files managed by git_steering gem
 
 ### Testing with Parent Context
 
@@ -251,8 +251,7 @@ active_data_flow (parent)
 └── submodules/
     ├── active_data_flow-connector-source-active_record (child)
     │   ├── Uses: submoduler-core-submoduler_child
-    │   ├── .submoduler.ini points to parent
-    │   └── Symlinks to parent .kiro/
+    │   └── .submoduler.ini points to parent
     ├── active_data_flow-connector-sink-active_record (child)
     │   ├── Uses: submoduler-core-submoduler_child
     │   └── ...
@@ -312,16 +311,14 @@ ls -la .submoduler.ini
 cat .submoduler.ini | grep path
 ```
 
-### Symlink Issues
+### Steering File Issues
 
 ```bash
-# Verify symlinks point to parent
+# Verify steering files are present
 ls -la .kiro/steering/
 
-# Recreate symlinks if broken
-cd .kiro/steering
-ln -sf ../../../../.kiro/glossary.md glossary.md
-# ... (repeat for other steering files)
+# Rebuild steering file symlinks using git_steering gem
+bin/git_steering symlink_build
 ```
 
 ### Build Issues
@@ -350,7 +347,7 @@ grep "spec.files" *.gemspec
 
 ### Documentation
 
-- **Reference parent docs**: Use symlinks to parent .kiro/
+- **Reference parent docs**: Steering files managed by git_steering gem
 - **Document child-specific**: Create subgem-specific requirements/design
 - **Keep README updated**: Document subgem usage
 

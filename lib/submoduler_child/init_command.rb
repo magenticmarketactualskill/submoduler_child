@@ -23,11 +23,6 @@ module SubmodulerChild
       
       puts "✓ Initialized Submoduler Child: #{child_name}"
       
-      # Auto-create symlinks
-      puts "\nBuilding symlinks..."
-      require_relative 'symlink_build_command'
-      SymlinkBuildCommand.run
-      
       puts ""
       puts "Next steps:"
       puts "  1. Review .submoduler.ini configuration"
