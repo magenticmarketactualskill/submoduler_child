@@ -49,6 +49,10 @@ module SubmodulerChild
       OptionParser.new do |opts|
         opts.banner = "Usage: bin/submoduler_child.rb update [options]"
         
+        opts.on("-m", "--message MESSAGE", "Commit message (required)") do |v|
+          @options[:message] = v
+        end
+        
         opts.on("--[no-]release", "Create a GitHub release (requires GITHUB_TOKEN)") do |v|
           @options[:release] = v
         end
@@ -58,6 +62,13 @@ module SubmodulerChild
           exit 0
         end
       end.parse!(@args)
+      
+      # Validate required options
+      unless @options[:message]
+        puts "Error: --message (-m) is required"
+        puts "Usage: bin/submoduler update -m 'commit message' [options]"
+        exit 1
+      end
     end
 
     def run_tests
@@ -81,7 +92,7 @@ module SubmodulerChild
 
     def commit_changes
       puts "Committing changes..."
-      message = "Update #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}"
+      message = @options[:message]
       system("git commit -m '#{message}'")
     end
 
