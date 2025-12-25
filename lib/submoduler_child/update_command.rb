@@ -3,6 +3,7 @@
 require 'optparse'
 require 'rainbow'
 require 'octokit'
+require 'submoduler_common'
 
 module SubmodulerChild
   class UpdateCommand
@@ -14,6 +15,24 @@ module SubmodulerChild
 
     def execute
       puts Rainbow("Starting update workflow...").cyan
+
+      # Detect and handle any uncommitted changes first
+      change_detector = SubmodulerCommon::ChangeDetector.new('.')
+      git_manager = SubmodulerCommon::GitManager.new('.')
+      
+      if change_detector.has_changes?
+        puts Rainbow("Detected uncommitted changes, handling them...").yellow
+        
+        # Auto-commit working tree changes if any exist
+        unless change_detector.git_clean?
+          puts "Committing working tree changes..."
+          message = @options[:message] || "Auto-commit changes before submoduler update"
+          unless git_manager.auto_commit_changes(message)
+            puts Rainbow("Failed to commit changes").red
+            return 1
+          end
+        end
+      end
 
       unless run_tests
         puts Rainbow("Tests failed! Aborting update.").red
